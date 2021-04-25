@@ -1,40 +1,38 @@
-import { Form, Row, Col } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
+import { RangeValue } from '../types/range';
 
 type Props = {
   label: string;
-  value: {
-    from: number;
-    to: number;
-  };
-  onChange: (value: object) => void;
+  value: RangeValue;
+  name: string;
+  onChange: (value: RangeValue, name: string) => void;
 };
 
-const Range = ({ label, value, onChange }: Props) => {
+const Range = ({ label, name, value, onChange }: Props) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value: inputValue } = e.target;
-    onChange({
-      ...value,
-      [name]: Number(inputValue),
-    });
+    const { name: inputName, value: inputValue } = e.target;
+    onChange(
+      {
+        ...value,
+        [inputName]: Number(inputValue),
+      },
+      name,
+    );
   };
 
   return (
     <div>
-      <Form.Group as={Row} controlId="formPlaintextEmail">
-        <Form.Label column={true} sm="2">
-          {label}
-        </Form.Label>
-        <Col sm="10">
-          <div className="d-flex align-items-center">
-            <Form.Control
-              value={value.from}
-              name="from"
-              onChange={handleChange}
-            />
-            <div className="mx-2">To</div>
-            <Form.Control value={value.to} name="to" onChange={handleChange} />
-          </div>
-        </Col>
+      <Form.Group controlId="formPlaintextEmail">
+        <Form.Label>{label}</Form.Label>
+        <div className="d-flex align-items-center">
+          <Form.Control
+            value={value.from}
+            name="from"
+            onChange={handleChange}
+          />
+          <div className="mx-2">To</div>
+          <Form.Control value={value.to} name="to" onChange={handleChange} />
+        </div>
       </Form.Group>
     </div>
   );
