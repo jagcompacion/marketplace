@@ -1,14 +1,19 @@
 import React, { useState } from 'react';
 import { Row, Col, Container } from 'react-bootstrap';
 import Filters from './Filters';
-import MarketPlaceList from './List';
+import List from './List';
 import { FilterValue } from '../types/filters';
 import { useListings } from '../query/listings';
+import { SortValue } from '../types/sort';
 
 const initFilters = {
   listingPrice: {
     from: 0,
     to: 0,
+  },
+  sort: {
+    sort: 'listing_price',
+    order: 'ASC',
   },
 };
 
@@ -22,8 +27,24 @@ const MarketPlace = () => {
     });
   };
 
-  const { isLoading } = useListings({ page: 1, limit: 20 });
-  console.log(isLoading);
+  const handleChangeSort = (sort: SortValue) => {
+    setFilters({
+      ...filters,
+      sort,
+    });
+  };
+
+  const { isLoading, data } = useListings({
+    listing_price_from: filters.listingPrice.from,
+    listing_price_to: filters.listingPrice.to,
+    sort: filters.sort.sort,
+    order: filters.sort.order,
+    page: 1,
+    limit: 20,
+  });
+
+  const listings = data ? data.data.listings : [];
+  console.log(filters);
   return (
     <Container>
       <Row className="my-5 justify-content-center">
@@ -33,7 +54,12 @@ const MarketPlace = () => {
         </Col>
         <Col md="8">
           <h4 className="mb-3">Market Place</h4>
-          <MarketPlaceList />
+          <List
+            listings={listings}
+            sort={filters.sort}
+            onChangeSort={handleChangeSort}
+            isLoading={isLoading}
+          />
         </Col>
       </Row>
     </Container>
